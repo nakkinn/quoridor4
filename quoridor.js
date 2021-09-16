@@ -1,7 +1,7 @@
 let block=new Array(17);
 for(let i=0;i<17;i++)   block[i]=new Array(17);
 let ts=60,rs=15,px=50,py=50,mode=0,c=6,r=6;
-let dir=[[[-1,0],[1,0]],[[0,-1],[0,1]]],col=['#3a57fd','#f14434','#20992a','#faed3b'];
+let dir=[[[-1,0],[1,0]],[[0,-1],[0,1]]],col=['#3a57fd','#f14434','#20992a','#000000'];
 let pnum=1,mem=4,start=true;
 let myturn,turn=0;
 let wall=5;
