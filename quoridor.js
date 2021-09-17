@@ -158,6 +158,7 @@ function keyPressed(){
     if(key=='c'){
         room.send("close");
     }
+    if(keyCode==SHIFT)  mode=(mode+1)%2;
 }
 
 function reset(){
