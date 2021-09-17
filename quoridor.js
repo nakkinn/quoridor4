@@ -2,7 +2,7 @@ let block=new Array(17);
 for(let i=0;i<17;i++)   block[i]=new Array(17);
 let ts=60,rs=15,px=50,py=50,mode=0,c=6,r=6;
 let dir=[[[-1,0],[1,0]],[[0,-1],[0,1]]],col=['#3a57fd','#f14434','#20992a','#000000'];
-let pnum=1,mem=4,start=true;
+let pnum=1,mem=0,start=true,skip=false;
 let myturn,turn=0;
 let wall=5;
 let peer,room,id="";
@@ -21,12 +21,14 @@ function setup(){
         });
         room.on('open',()=>{
             pnum=room.members.length+1;
+            mem=pnum;
             for(let i=2;i<15;i+=2)  block[i][16]=7;
             if(pnum==1) myturn=true;
             turn=(5-pnum)%4;
         });
         room.on('peerJoin',peerId=>{
             console.log(peerId+"参加");
+            mem++;
         });
         room.on('peerLeave',peerId=>{
             console.log(peerId+"退出");
@@ -90,16 +92,16 @@ function draw(){
     line(px,py+9*ts+8*rs+10,px+9*ts+8*rs,py+9*ts+8*rs+10);
     if(turn==1) strokeWeight(12);    else    strokeWeight(4);
     stroke(col[(0+pnum)%4]);
-    line(px+9*ts+8*rs+10,py,px+9*ts+8*rs+10,py+9*ts+8*rs);
+    if((0+pnum)%4<mem)   line(px+9*ts+8*rs+10,py,px+9*ts+8*rs+10,py+9*ts+8*rs);
     if(turn==2) strokeWeight(12);    else    strokeWeight(4);
     stroke(col[(1+pnum)%4]);
-    line(px,py-10,px+9*ts+8*rs,py-10);
+    if((1+pnum)%4<mem)   line(px,py-10,px+9*ts+8*rs,py-10);
     if(turn==3) strokeWeight(12);    else    strokeWeight(4);
     stroke(col[(2+pnum)%4]);
-    line(px-10,py,px-10,py+9*ts+8*rs);
+    if((2+pnum)%4<mem)   line(px-10,py,px-10,py+9*ts+8*rs);
 
     noStroke(),fill(0),textSize(30);
-    text(wall,800,800);
+    text(wall,700,760);
 }
 
 function mouseClicked(){
@@ -115,6 +117,7 @@ function mouseClicked(){
                     room.send(pnum+',m,'+c+','+r+','+i*2+','+j*2);
                     c=i*2;
                     r=j*2;
+                    if(r==0)    skip=true;
                     myturn=false;
                     turn=(turn+1)%4;
                     flag=false;
@@ -146,6 +149,15 @@ function keyPressed(){
         reset();
         room.send("reset");
     }
+    if(key=='s'){
+        skip=true;
+        room.send(pnum+",3")
+        myturn=false;
+        turn=(turn+1%4);
+    }
+    if(key=='c'){
+        room.send("close");
+    }
 }
 
 function reset(){
@@ -165,6 +177,7 @@ function reset(){
     for(let i=3;i>0;i--)    col[i]=col[i-1];
     col[0]=tem;
     start=true;
+    skip=false;
 }
 
 function mouseWheel(){
@@ -207,6 +220,7 @@ function ins(cc,rr){
 
 function receive(s){
     if(s=="reset")  reset();
+    else if(s=="close") room.close();
     else    cmd(s);
 }
 
@@ -233,8 +247,17 @@ function cmd(s){
         enable();
         turn=(turn+1)%4;
     }
+    if(s[1]=='s'||s[1]=='3'){
+        turn=(turn+1)%4;
+    }
+    if(s[1]=='3')   wall++;
 
-    if(s[0]%mem+1==pnum)    myturn=true;
+    if(s[0]%4+1==pnum)    myturn=true;
+    if(myturn&&skip){
+        room.send(pnum+",s")
+        myturn=false;
+        turn=(turn+1%4);
+    }
     return s;
 }
 
