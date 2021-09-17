@@ -231,7 +231,6 @@ function cmd(s){
     if(s[1]=='m'){
         block[ conc(s[2],s[3],s[0]) ][ conr(s[2],s[3],s[0]) ]=0;
         block[ conc(s[4],s[5],s[0]) ][ conr(s[4],s[5],s[0]) ]=s[0]+2;
-        enable();
         turn=(turn+1)%4;
     }
     if(s[1]=='w'){
@@ -245,15 +244,29 @@ function cmd(s){
             block[ conc(s[3],s[4],s[0]) ][ conr(s[3],s[4],s[0])-1 ]=s[0]+7;
             block[ conc(s[3],s[4],s[0]) ][ conr(s[3],s[4],s[0])+1 ]=s[0]+7;
         }
-        enable();
         turn=(turn+1)%4;
+    }
+    if(s[1]=='d'){
+        for(let i=2;i<5;i++)    s[i]=int(s[i]);
+        block[ conc(s[3],s[4],s[0]) ][ conr(s[3],s[4],s[0]) ]=0;
+        if((pnum+4-s[0])%4!=2) s[2]=(s[2]+1)%2;
+        if(s[2]==0){
+            block[ conc(s[3],s[4],s[0])-1 ][ conr(s[3],s[4],s[0]) ]=0;
+            block[ conc(s[3],s[4],s[0])+1 ][ conr(s[3],s[4],s[0]) ]=0;
+        }else{
+            block[ conc(s[3],s[4],s[0]) ][ conr(s[3],s[4],s[0])-1 ]=0;
+            block[ conc(s[3],s[4],s[0]) ][ conr(s[3],s[4],s[0])+1 ]=0;
+        }
     }
     if(s[1]=='s'||s[1]=='3'){
         turn=(turn+1)%4;
     }
     if(s[1]=='3')   wall++;
 
-    if(s[0]%4+1==pnum)    myturn=true;
+    if(s[0]%4+1==pnum&&s[1]!='d'){
+        myturn=true;
+        enable();
+    }
     if(myturn&&skip){
         room.send(pnum+",s")
         myturn=false;
@@ -272,4 +285,11 @@ function conr(c,r,n){
     if((pnum+4-n)%4==1) return c;
     if((pnum+4-n)%4==2) return 16-r; 
     if((pnum+4-n)%4==3) return 16-c;
+}
+
+function wd(a,b,c){
+    room.send(pnum+',d,'+a+','+b+','+c);
+    block[b][c]=0;
+    block[b+dir[a][0][0]][c+dir[a][0][1]]=0;
+    block[b+dir[a][1][0]][c+dir[a][1][1]]=0;
 }
