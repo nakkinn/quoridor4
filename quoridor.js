@@ -3,7 +3,7 @@ for(let i=0;i<17;i++)   block[i]=new Array(17);
 let ts=60,rs=15,px=50,py=50,mode=0,c=6,r=6;
 let dir=[[[-1,0],[1,0]],[[0,-1],[0,1]]],col=['#3a57fd','#f14434','#20992a','#000000'];
 let pnum=1,mem=0,start=true,skip=false;
-let myturn,turn=0;
+let myturn,turn=0,dualmode=false;
 let wall=5;
 let peer,room,id="";
 
@@ -167,6 +167,13 @@ function reset(){
         block[i][j]=0;
     }
     for(let i=2;i<15;i+=2)  block[i][16]=7;
+    if(dualmode){
+        for(let i=2;i<15;i+=2){
+            block[i][0]=7;
+            block[0][i]=7;
+            block[16][i]=7;
+        }
+    }
     pnum++;
     if(pnum==5) pnum=1;
     if(pnum==1) myturn=true;
@@ -222,6 +229,7 @@ function ins(cc,rr){
 function receive(s){
     if(s=="reset")  reset();
     else if(s=="close") room.close();
+    else if(s=="dual")  dualmode=true;
     else    cmd(s);
 }
 
@@ -258,7 +266,7 @@ function cmd(s){
             block[ conc(s[3],s[4],s[0]) ][ conr(s[3],s[4],s[0])+1 ]=0;
         }
     }
-    if(s[1]=='s'||s[1]=='3'){
+    if(s[1]=='s'||s[1]=='3'||s[1]=='2'){
         turn=(turn+1)%4;
     }
     if(s[1]=='3')   wall=6;
