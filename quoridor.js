@@ -149,9 +149,9 @@ function keyPressed(){
         reset();
         room.send("reset");
     }
-    if(key=='s'){
+    if(key=='3'||key=='2'){
         skip=true;
-        room.send(pnum+",3")
+        room.send(pnum+','+key)
         myturn=false;
         turn=(turn+1%4);
     }
@@ -261,7 +261,8 @@ function cmd(s){
     if(s[1]=='s'||s[1]=='3'){
         turn=(turn+1)%4;
     }
-    if(s[1]=='3')   wall++;
+    if(s[1]=='3')   wall=6;
+    if(s[1]=='2')   wall=10;
 
     if(s[0]%4+1==pnum&&s[1]!='d'){
         myturn=true;
