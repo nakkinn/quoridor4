@@ -202,7 +202,7 @@ function enable(){
                 if(block[c+d[i][0]][r+d[i][1]]==0){
                     if(block[c+d[i][0]*2][r+d[i][1]*2]==0)  block[c+d[i][0]*2][r+d[i][1]*2]=7;
                     else{
-                        if(ins(c+d[i][0]*3,c+d[i][1]*3)){
+                        if(ins(c+d[i][0]*3,r+d[i][1]*3)){
                             if(block[c+d[i][0]*3][r+d[i][1]*3]==0&&block[c+d[i][0]*4][r+d[i][1]*4]==0)  block[c+d[i][0]*4][r+d[i][1]*4]=7;
                             else    if(block[c+d[i][0]*3][r+d[i][1]*3]!=0){
                                 let cc=c+d[i][0]*2,rr=r+d[i][1]*2;
